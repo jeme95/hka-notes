@@ -1,4 +1,4 @@
-package com.example.testapplication.screens
+package com.example.hkaNotes.screens
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -14,16 +14,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
+import com.example.hkaNotes.viewmodel.note.rememberNoteScreenState
 import com.example.hkaNotes.R
-import com.example.testapplication.viewmodel.note.NoteViewModel
-import com.example.testapplication.viewmodel.note.rememberNoteScreenState
-import com.example.testapplication.ui.theme.AppFontColor
-import com.example.testapplication.ui.theme.TestApplicationTheme
+import com.example.hkaNotes.database.Note
+import com.example.hkaNotes.database.NoteViewModelRoom
+import com.example.hkaNotes.ui.theme.AppFontColor
+import com.example.hkaNotes.ui.theme.TestApplicationTheme
 
 @Composable
 fun CreateNoteScreen(
     navController: NavHostController,
-    viewModel: NoteViewModel
+    viewModel: NoteViewModelRoom
 ) {
 
     fun navigateBack() {
@@ -33,16 +34,17 @@ fun CreateNoteScreen(
     var title: String by rememberSaveable { mutableStateOf("") }
     var content: String by rememberSaveable { mutableStateOf("") }
 
-    var openDialog by rememberSaveable { mutableStateOf(false) }
+    var openDialogEmptyNote by rememberSaveable { mutableStateOf(false) }
+    var openDialogMaxLengthReached by rememberSaveable { mutableStateOf(false) }
 
     val stateHolder = rememberNoteScreenState(viewModel = viewModel)
 
     fun checkBlankAndSave(title: String, content: String) {
         if (title.isNotBlank() && content.isNotBlank()) {
-            stateHolder.addNote(title, content)
+            stateHolder.addNote(Note(title, content))
             navigateBack()
         } else {
-            openDialog = true
+            openDialogEmptyNote = true
         }
     }
 
@@ -101,16 +103,16 @@ BackHandler {
                     modifier = Modifier
                         .padding(bottom = 5.dp, start = 40.dp, end = 40.dp)
                         .verticalScroll(enabled = true, state = ScrollState(10))
-                        .fillMaxWidth(), onValueChange = { title = it })
+                        .fillMaxWidth(), onValueChange = { if(it.length <= 120) title = it else openDialogMaxLengthReached = true})
 //                TitleComposable_end
 
 
-                Spacer(modifier = Modifier.width(1.dp))
+                Spacer(modifier = Modifier.width(20.dp))
 
                 //                ContentComposable_start
                 OutlinedTextField(value = content,
                     modifier = Modifier
-                        .height(200.dp)
+                        .height(250.dp)
                         .verticalScroll(enabled = true, state = ScrollState(10))
                         .padding(bottom = 5.dp, start = 40.dp, end = 40.dp)
                         .fillMaxWidth(),
@@ -123,10 +125,10 @@ BackHandler {
 
 //            EmptyNoteDialog_start
             Column {
-                if (openDialog) {
+                if (openDialogEmptyNote) {
                     AlertDialog(
                         onDismissRequest = {
-                            openDialog = false
+                            openDialogEmptyNote = false
                         },
                         title = {
                             Text(text = "Failure")
@@ -137,7 +139,7 @@ BackHandler {
                         confirmButton = {
                             Button(
                                 onClick = {
-                                    openDialog = false
+                                    openDialogEmptyNote = false
                                 }) {
                                 Text("Ok", color = AppFontColor)
                             }
@@ -150,10 +152,39 @@ BackHandler {
 
         }
 
+        //            MaxLengthReachedDialog_start
+        Column {
+            if (openDialogMaxLengthReached) {
+                AlertDialog(
+                    onDismissRequest = {
+                        openDialogMaxLengthReached = false
+                    },
+                    title = {
+                        Text(text = "Failure")
+                    },
+                    text = {
+                        Text("Title may be a maximum of 120 characters!")
+                    },
+                    confirmButton = {
+                        Button(
+                            onClick = {
+                                openDialogMaxLengthReached = false
+                            }) {
+                            Text("Ok", color = AppFontColor)
+                        }
+                    }
+                )
+
+            }
+        }
+//            MaxLengthReachedDialog_end
+
     }
 
 
 }
+
+
 
 
 
