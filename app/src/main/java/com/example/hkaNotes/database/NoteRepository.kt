@@ -10,13 +10,12 @@ class NoteRepository(private val notesDAO: NotesDAO) {
         notesDAO.insert(noteItem)
     }
 
-
-    suspend fun deleteNote(noteItem: Note) {
-        notesDAO.delete(noteItem)
-    }
-
     suspend fun deleteById(id: Long) {
         notesDAO.deleteById(id)
+    }
+
+    fun getById(id: Long): LiveData<Note> {
+        return notesDAO.getById(id)
     }
 
 

@@ -9,14 +9,12 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.hkaNotes.database.Note
 import com.example.hkaNotes.database.NoteViewModelRoom
-import com.example.hkaNotes.ui.theme.AppFontColor
 import com.example.hkaNotes.ui.theme.WarningColor
 
 @ExperimentalMaterialApi
@@ -25,26 +23,15 @@ import com.example.hkaNotes.ui.theme.WarningColor
 fun NoteListItemComposable(
     note: Note,
     showNoteDetails: () -> Unit,
-    noteDetailsViewModel: NoteDetailsViewModel,
     viewModel: NoteViewModelRoom,
     modifier: Modifier = Modifier
 ) {
 
-    var openDialog by rememberSaveable { mutableStateOf(false) }
-
     var showRemoveIcon by remember { mutableStateOf(false) }
+    val stateHolder = rememberNoteScreenState(viewModel = viewModel)
 
-    fun showRemoveIcon() {
-        showRemoveIcon = true
-    }
-
-    fun openNote() {
-        noteDetailsViewModel.changeNoteDetails(note.id,note.title,note.content)
-        showNoteDetails()
-    }
-
-    fun removeNote() {
-        viewModel.deleteNote(note)
+    fun deleteNote() {
+        stateHolder.deleteById(note.id)
         showRemoveIcon = false
     }
 
@@ -55,7 +42,7 @@ fun NoteListItemComposable(
             onDismissRequest = { showRemoveIcon = false }
         ) {
             IconButton(
-                onClick = { removeNote() },
+                onClick = { deleteNote() },
                 modifier = Modifier.background(Color.Transparent)
 
             ) {
@@ -96,10 +83,10 @@ fun NoteListItemComposable(
                 .background(Color.White)
                 .combinedClickable(
                     onClick = {
-                        openNote()
+                        showNoteDetails()
                     },
                     onLongClick = {
-                        showRemoveIcon()
+                        showRemoveIcon = true
                     }),
             elevation = 10.dp,
             shape = RoundedCornerShape(5.dp),
@@ -112,49 +99,7 @@ fun NoteListItemComposable(
         }
     }
 
-    @Composable
-    fun DeleteConfirmationDialog() {
-        Column {
-            if (openDialog) {
-                AlertDialog(
-                    onDismissRequest = {
-                        openDialog = false
-                    },
-                    title = {
-                        Text(text = "Delete confirmation")
-                    },
-                    text = {
-                        Text("Are you sure you want to delete this item?")
-                    },
-                    confirmButton = {
-                        Button(
-                            onClick = {
-                                viewModel.deleteNote(note)
-//                          removeNote()
-                                openDialog = false
-                            }) {
-                            Text("Delete", color = AppFontColor)
-                        }
-                    },
-                    dismissButton = {
-                        Button(
-
-                            onClick = {
-                                openDialog = false
-                            }) {
-                            Text("Cancel", color = AppFontColor)
-                        }
-                    }
-                )
-
-            }
-        }
-
-    }
-
     NoteCard()
-    DeleteConfirmationDialog()
-
 
 }
 

@@ -3,14 +3,11 @@ package com.example.hkaNotes.screens
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
@@ -49,8 +46,7 @@ fun CreateNoteScreen(
     }
 
 /*
-
-// Save note even if back is clicked?
+// Save note even if back is clicked? but with empty notes it gets stuck in
 BackHandler {
         checkBlankAndSave(title, content)
     }*/
@@ -98,12 +94,16 @@ BackHandler {
                 OutlinedTextField(
                     value = title,
                     placeholder = {
-                        Text(text = "titel", color = Color.LightGray)
+                        Text(text = "title", color = Color.LightGray)
                     },
                     modifier = Modifier
                         .padding(bottom = 5.dp, start = 40.dp, end = 40.dp)
-                        .verticalScroll(enabled = true, state = ScrollState(10))
-                        .fillMaxWidth(), onValueChange = { if(it.length <= 120) title = it else openDialogMaxLengthReached = true})
+                        .verticalScroll(enabled = true, state = ScrollState(100))
+                        .fillMaxWidth(), onValueChange = {
+                        if (it.length <= 100) {
+                            title = it
+                        } else openDialogMaxLengthReached = true
+                    })
 //                TitleComposable_end
 
 
@@ -112,8 +112,8 @@ BackHandler {
                 //                ContentComposable_start
                 OutlinedTextField(value = content,
                     modifier = Modifier
-                        .height(250.dp)
-                        .verticalScroll(enabled = true, state = ScrollState(10))
+                        .height(220.dp)
+                        .verticalScroll(enabled = true, state = ScrollState(2 * content.length))
                         .padding(bottom = 5.dp, start = 40.dp, end = 40.dp)
                         .fillMaxWidth(),
                     placeholder = {
@@ -163,7 +163,7 @@ BackHandler {
                         Text(text = "Failure")
                     },
                     text = {
-                        Text("Title may be a maximum of 120 characters!")
+                        Text("Title may be a maximum of 100 characters!")
                     },
                     confirmButton = {
                         Button(

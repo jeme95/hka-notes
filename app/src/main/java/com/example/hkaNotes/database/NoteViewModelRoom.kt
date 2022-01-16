@@ -1,7 +1,6 @@
 package com.example.hkaNotes.database
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
@@ -22,17 +21,14 @@ class NoteViewModelRoom(application: Application) : AndroidViewModel(application
         notes = repository.readAllData
     }
 
+    fun getById(id: Long): LiveData<Note> {
+        return repository.getById(id)
+    }
+
     fun addNote(noteItem: Note) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.addNote(noteItem)
         }
-    }
-
-    fun deleteNote(noteItem: Note) {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.deleteNote(noteItem = noteItem)
-        }
-
     }
 
     fun deleteById(id: Long) {

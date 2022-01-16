@@ -14,6 +14,8 @@ class NoteStateHolder(
     val notes = viewModel.notes
 
     fun addNote(note: Note) = viewModel.addNote(note)
+    fun currentNote(id: Long) = viewModel.getById(id)
+    fun deleteById(id: Long) = viewModel.deleteById(id)
 }
 
 @Composable

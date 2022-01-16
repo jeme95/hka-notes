@@ -2,7 +2,6 @@ package com.example.hkaNotes.screens
 
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.Arrangement.Center
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -12,26 +11,26 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.painterResource
-import com.example.hkaNotes.database.Note
 import com.example.hkaNotes.database.NoteViewModelRoom
-import com.example.hkaNotes.viewmodel.note.NoteDetailsViewModel
 import com.example.hkaNotes.ui.theme.AppFontColor
 import com.example.hkaNotes.ui.theme.WarningColor
+import com.example.hkaNotes.viewmodel.note.rememberNoteScreenState
 
 @Composable
 fun NoteDetailsScreen(
-    noteDetailsViewModel: NoteDetailsViewModel,
+    id: String,
     viewModel: NoteViewModelRoom,
     goBack: () -> Unit
 ) {
+    val idLong = id.toLong()
 
-    val id by noteDetailsViewModel.id.observeAsState()
-    val title by noteDetailsViewModel.title.observeAsState()
-    val content by noteDetailsViewModel.content.observeAsState()
+    val stateHolder = rememberNoteScreenState(viewModel = viewModel)
+    val currentNote by stateHolder.currentNote(idLong).observeAsState()
 
+    val title = currentNote?.title
+    val content = currentNote?.content
 
     Scaffold(
         topBar = {
@@ -41,9 +40,7 @@ fun NoteDetailsScreen(
                 },
                 actions = {
                     IconButton(onClick = {
-//                    if(id!=null)
-                        viewModel.deleteById(id!!)
-//                    viewModel.deleteNote(Note("$title", "$content", id?:0))
+                        stateHolder.deleteById(idLong)
                         goBack()
                     }) {
                         Icon(

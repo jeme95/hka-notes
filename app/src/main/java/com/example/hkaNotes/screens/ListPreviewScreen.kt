@@ -21,7 +21,6 @@ import androidx.navigation.NavHostController
 import com.example.hkaNotes.database.NoteViewModelRoom
 import com.example.hkaNotes.navigation.Route
 import com.example.hkaNotes.ui.theme.TestApplicationTheme
-import com.example.hkaNotes.viewmodel.note.NoteDetailsViewModel
 import com.example.hkaNotes.viewmodel.note.NoteListItemComposable
 import com.example.hkaNotes.viewmodel.note.rememberNoteScreenState
 
@@ -30,15 +29,14 @@ import com.example.hkaNotes.viewmodel.note.rememberNoteScreenState
 @Composable
 fun ListPreviewScreen(
     navController: NavHostController,
-    viewModel: NoteViewModelRoom,
-    noteDetailsViewModel: NoteDetailsViewModel,
+    viewModel: NoteViewModelRoom
 ) {
 
     val stateHolder = rememberNoteScreenState(viewModel = viewModel)
     val notes by stateHolder.notes.observeAsState(emptyList())
 
-    fun navigateToNoteDetails() {
-        navController.navigate(Route.NoteDetailsRoute.route)
+    fun navigateToNoteDetails(id: Long) {
+        navController.navigate(Route.NoteDetailsRoute.route + "/" + id)
     }
 
 
@@ -56,13 +54,13 @@ fun ListPreviewScreen(
 
             items(
                 items = notes,
-                key = {
-                    note -> note.id
+                key = { note ->
+                    note.id
                 }
             ) { note ->
                 NoteListItemComposable(
                     note = note,
-                    { navigateToNoteDetails() }, noteDetailsViewModel, viewModel
+                    { navigateToNoteDetails(note.id) }, viewModel
                 )
             }
         }
@@ -86,9 +84,7 @@ fun ListPreviewScreen(
     }
 
 
-
 }
-
 
 
 @Composable
