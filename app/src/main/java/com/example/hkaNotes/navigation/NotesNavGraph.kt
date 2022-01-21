@@ -1,19 +1,15 @@
 package com.example.hkaNotes.navigation
 
-import android.app.Application
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.rememberNavController
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.hkaNotes.database.NoteViewModelFactory
 import com.example.hkaNotes.database.NoteViewModelRoom
 import com.example.hkaNotes.screens.CreateNoteScreen
 import com.example.hkaNotes.screens.ListPreviewScreen
@@ -24,13 +20,11 @@ import com.example.hkaNotes.screens.NoteDetailsScreen
 @ExperimentalFoundationApi
 @Composable
 fun NotesNavGraph(
+    viewModel: NoteViewModelRoom,
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
     startDestination: String = Route.ListPreviewRoute.route,
 ) {
-    val context = LocalContext.current
-    val viewModel: NoteViewModelRoom =
-        viewModel(factory = NoteViewModelFactory(context.applicationContext as Application))
 
     NavHost(
         navController = navController,

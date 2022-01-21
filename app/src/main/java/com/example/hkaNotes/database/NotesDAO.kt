@@ -4,11 +4,12 @@ import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface NotesDAO {
     @Query("SELECT * from Note ORDER BY id DESC")
-    fun getAll(): LiveData<List<Note>>
+    fun getAll(): Flow<List<Note>>
 
     @Query("SELECT * from Note where id = :id")
     fun getById(id: Long): LiveData<Note>

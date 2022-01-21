@@ -1,10 +1,11 @@
 package com.example.hkaNotes.database
 
 import androidx.lifecycle.LiveData
+import kotlinx.coroutines.flow.Flow
 
 class NoteRepository(private val notesDAO: NotesDAO) {
 
-    val readAllData: LiveData<List<Note>> = notesDAO.getAll()
+    val readAllData: Flow<List<Note>> = notesDAO.getAll()
 
     suspend fun addNote(noteItem: Note) {
         notesDAO.insert(noteItem)
@@ -14,7 +15,7 @@ class NoteRepository(private val notesDAO: NotesDAO) {
         notesDAO.deleteById(id)
     }
 
-    fun getById(id: Long): LiveData<Note> {
+     fun getById(id: Long): LiveData<Note> {
         return notesDAO.getById(id)
     }
 

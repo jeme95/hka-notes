@@ -1,27 +1,18 @@
 package com.example.hkaNotes.database
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.lang.IllegalArgumentException
 
-class NoteViewModelRoom(application: Application) : AndroidViewModel(application) {
+class NoteViewModelRoom(private val repository: NoteRepository) : ViewModel() {
 
-    val notes: LiveData<List<Note>>
-    private val repository: NoteRepository
+    val notes: LiveData<List<Note>> = repository.readAllData.asLiveData()
 
-    init {
-        val noteDAO = NotesDatabase.getInstance(application).noteDao()
-        repository = NoteRepository(noteDAO)
-        notes = repository.readAllData
-    }
 
-    fun getById(id: Long): LiveData<Note> {
+     fun getById(id: Long): LiveData<Note> {
         return repository.getById(id)
     }
 
@@ -40,14 +31,5 @@ class NoteViewModelRoom(application: Application) : AndroidViewModel(application
 
 }
 
-class NoteViewModelFactory(private val application: Application) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        @Suppress("UNCHECKED_CAST")
-        if (modelClass.isAssignableFrom(NoteViewModelRoom::class.java)) {
-            return NoteViewModelRoom(application = application) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
-    }
-}
 
 

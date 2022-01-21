@@ -8,8 +8,7 @@ import com.example.hkaNotes.database.Note
 import com.example.hkaNotes.database.NoteViewModelRoom
 
 class NoteStateHolder(
-    val resources: Resources,
-    val viewModel: NoteViewModelRoom
+    private val viewModel: NoteViewModelRoom
 ) {
     val notes = viewModel.notes
 
@@ -23,5 +22,5 @@ fun rememberNoteScreenState(
     resources: Resources = LocalContext.current.resources,
     viewModel: NoteViewModelRoom
 ) = remember(resources, viewModel) {
-    NoteStateHolder(resources, viewModel)
+    NoteStateHolder(viewModel)
 }
